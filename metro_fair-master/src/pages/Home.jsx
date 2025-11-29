@@ -31,7 +31,7 @@ const Home = () => {
       inp["nodes"] = nodes;
     }
 
-    const res = await fetch("http://localhost:5000/getPath", {
+    const res = await fetch("https://delhimetrobackend.onrender.com/getPath", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(inp),
