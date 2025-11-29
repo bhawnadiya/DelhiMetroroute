@@ -1,20 +1,32 @@
-from flask import Flask,request
-from path_algorithm import getPath,getPathFull
-from flask_cors import CORS, cross_origin
+from flask import Flask, request
+from flask_cors import CORS
+from path_algorithm import getPath, getPathFull
+import os
+
 app = Flask(__name__)
-cors = CORS(app)
-app.config['CORS_HEADERS'] = 'Content-Type'
-@app.route("/getPath",methods=["POST"])
+CORS(app, resources={r"/*": {"origins": "*"}})
+
+@app.route("/getPath", methods=["POST", "OPTIONS"])
 def getPost():
-    body= request.get_json()
+    # Handle CORS Preflight request
+    if request.method == "OPTIONS":
+        return {"status": "ok"}, 200
+
+    body = request.get_json()
     print(body)
-    source:str = body["source"]
-    dest:str = body["destination"]
-    if("nodes" in body):
+
+    source = body["source"]
+    dest = body["destination"]
+
+    # If user adds intermediate nodes
+    if "nodes" in body:
         nodes = body["nodes"]
-        return {"path":getPathFull(source,nodes,dest)}
-    else:
-        return {"path":getPath(source,dest)}
+        return {"path": getPathFull(source, nodes, dest)}
+
+    # Simple source → destination path
+    return {"path": getPath(source, dest)}
+
+
 if __name__ == "__main__":
-    cross_origin(getPost)
-    app.run(port=5000)
+    port = int(os.environ.get("PORT", 5000))   # Render will set PORT automatically
+    app.run(host="0.0.0.0", port=port)
