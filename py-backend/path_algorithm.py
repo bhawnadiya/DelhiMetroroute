@@ -1,5 +1,4 @@
 import networkx as nx
-import matplotlib.pyplot as plt
 import pandas as pd
 def getPath(src:str,dest:str):
     G = nx.Graph()
